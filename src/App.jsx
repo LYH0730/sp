@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
+
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNav";
 import Login from "./pages/Login";
@@ -37,7 +38,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Login />} />
@@ -45,7 +46,7 @@ function App() {
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
