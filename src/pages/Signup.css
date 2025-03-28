@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 300px;
+  max-width: 340px;
   background-color: #fff;
   color: black;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -63,15 +63,21 @@
 /* 라디오 버튼 그룹 스타일 */
 .radio-group {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 10px;
+  justify-content: space-between;
 }
 
 .radio-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex;             /* ✅ 핵심! 줄바꿈 방지 + 가로 정렬 */
+  align-items: center;             /* ✅ 수직 정렬 */
+  gap: 6px;                        /* ✅ 라디오 버튼과 텍스트 간격 */
   font-size: 14px;
   color: #3a1919;
+  white-space: nowrap;            /* ✅ 텍스트 줄바꿈 방지 */
+}
+
+.radio-group input[type="radio"] {
+  accent-color: crimson; /* 예쁜 강조 색 */
 }
