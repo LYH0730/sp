@@ -1,4 +1,4 @@
-import { faAngleLeft, faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.css";
@@ -7,12 +7,25 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const goBack = () => navigate(-1);
-  const userId = sessionStorage.getItem("email");
+  const path = location.pathname;
+  const isAuthPage = ["/", "/login", "/signup"].includes(path);
 
-  const handleConnectCart = () => {
-    if (!userId) navigate("/login");
-    else navigate("/cart");
+  const getCookie = (name) => {
+    const cookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(name + "="));
+    return cookie ? cookie.split("=")[1] : null;
+  };
+
+  const userId = sessionStorage.getItem("email") || getCookie("email");
+
+  const goBack = () => navigate(-1);
+
+  const handleLogout = () => {
+    document.cookie = "email=; max-age=0; path=/";
+    sessionStorage.removeItem("email");
+    alert("로그아웃 되었습니다.");
+    navigate("/login");
   };
 
   return (
@@ -21,16 +34,16 @@ const Header = () => {
         <FontAwesomeIcon icon={faAngleLeft} className="back-icon" onClick={goBack} />
       </div>
 
-      <Link to="/" className="link">
-        <h1 className="title">SmartParking</h1>
-      </Link>
+      <h1 className="title">SmartParking</h1>
 
-      <div className="link" onClick={handleConnectCart}>
-        <FontAwesomeIcon
-          icon={faCartShopping}
-          className={location.pathname === "/cart" ? "cart-icon active-cart-icon" : "cart-icon"}
-        />
-      </div>
+      {/* 우측 아이콘: 로그인 이후에만 표시 */}
+      {isAuthPage ? (
+        <div className="link" style={{ width: "24px" }}></div>
+      ) : (
+        <div className="link" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} className="logout-icon" />
+        </div>
+      )}
     </header>
   );
 };

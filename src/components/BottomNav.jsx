@@ -17,10 +17,10 @@ const BottomNav = () => {
 
   const handleConnectUser = () => {
     if (!userId) navigate("/login");
-    else navigate("/user");
+    else navigate("/mypage"); // 수정: /user → /mypage로 이동
   };
 
-  const showNav = ["/", "/home", "/search", "/user", "/map", "/barcode"].includes(location.pathname);
+  const showNav = ["/", "/home", "/search", "/mypage", "/map", "/barcode"].includes(location.pathname);
   if (!showNav) return null;
 
   return (
@@ -40,7 +40,7 @@ const BottomNav = () => {
       <Link to="/home" className="nav-link">
         <FontAwesomeIcon
           icon={faHome}
-          className={location.pathname === "/home" ? "nav-item active-nav-item" : "nav-item"}
+          className={location.pathname === "/home" ? "nav-item active-nav-item" : "nav-item inactive-nav-item"}
         />
       </Link>
       <Link to="/search" className="nav-link">
@@ -52,7 +52,7 @@ const BottomNav = () => {
       <div onClick={handleConnectUser} className="nav-link">
         <FontAwesomeIcon
           icon={faUser}
-          className={location.pathname === "/user" ? "nav-item active-nav-item" : "nav-item"}
+          className={location.pathname === "/mypage" ? "nav-item active-nav-item" : "nav-item"}
         />
       </div>
     </nav>
