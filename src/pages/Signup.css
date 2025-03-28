@@ -66,18 +66,44 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 10px;
-  justify-content: space-between;
+  justify-content: center; /* 중앙 정렬 */
 }
 
 .radio-group label {
-  display: inline-flex;             /* ✅ 핵심! 줄바꿈 방지 + 가로 정렬 */
-  align-items: center;             /* ✅ 수직 정렬 */
-  gap: 6px;                        /* ✅ 라디오 버튼과 텍스트 간격 */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
   color: #3a1919;
-  white-space: nowrap;            /* ✅ 텍스트 줄바꿈 방지 */
+  white-space: nowrap;
+  flex: 1 1 45%; /* ✅ 반응형 너비 조절: 한 줄에 2개 */
+  max-width: 150px; /* 최대 너비 제한 */
+  justify-content: flex-start;
+  padding: 4px;
 }
 
 .radio-group input[type="radio"] {
-  accent-color: crimson; /* 예쁜 강조 색 */
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  background-color: white;
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+
+/* 체크되었을 때 중앙에 붉은색 원 */
+.radio-group input[type="radio"]:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;  /* ✅ 바깥 원 대비 약 90% */
+  height: 14px;
+  transform: translate(-50%, -50%);  /* ✅ 정확히 중앙 정렬 */
+  border-radius: 50%;
+  background-color: crimson;
 }
