@@ -1,4 +1,5 @@
 [
+<<<<<<< HEAD
   {
     "p_id": 1,
     "name": "잠실역",
@@ -140,3 +141,147 @@
     "ai_recommend_score_fee": 85
   }
 ]
+=======
+    {
+      "p_id": 1,
+      "name": "잠실역",
+      "address": "서울특별시 송파구 신천동 29",
+      "latitude": 37.51470427155483,
+      "longitude": 127.10460578266432,
+      "fee": 2400,
+      "avg_rating": 4.5,
+      "real_time_congestion": 30,
+      "ai_recommend_score_distance": 85,
+      "ai_recommend_score_rating": 45,
+      "ai_recommend_score_congestion": 70,
+      "ai_recommend_score_fee": 80
+    },
+    {
+      "p_id": 2,
+      "name": "강남역",
+      "address": "서울특별시 강남구 역삼동 824",
+      "latitude": 37.497946,
+      "longitude": 127.027636,
+      "fee": 3000,
+      "avg_rating": 4.2,
+      "real_time_congestion": 60,
+      "ai_recommend_score_distance": 75,
+      "ai_recommend_score_rating": 85,
+      "ai_recommend_score_congestion": 60,
+      "ai_recommend_score_fee": 70
+    },
+    {
+      "p_id": 3,
+      "name": "서울역",
+      "address": "서울특별시 중구 한강로2가 100-5",
+      "latitude": 37.553343,
+      "longitude": 126.970696,
+      "fee": 2500,
+      "avg_rating": 4.0,
+      "real_time_congestion": 45,
+      "ai_recommend_score_distance": 80,
+      "ai_recommend_score_rating": 80,
+      "ai_recommend_score_congestion": 65,
+      "ai_recommend_score_fee": 85
+    },
+    {
+      "p_id": 4,
+      "name": "역삼역",
+      "address": "서울특별시 강남구 역삼동 739",
+      "latitude": 37.497329,
+      "longitude": 127.036481,
+      "fee": 2800,
+      "avg_rating": 4.3,
+      "real_time_congestion": 70,
+      "ai_recommend_score_distance": 90,
+      "ai_recommend_score_rating": 75,
+      "ai_recommend_score_congestion": 80,
+      "ai_recommend_score_fee": 65
+    },
+    {
+      "p_id": 5,
+      "name": "신촌역",
+      "address": "서울특별시 서대문구 창천동 34-12",
+      "latitude": 37.556014,
+      "longitude": 126.938842,
+      "fee": 2200,
+      "avg_rating": 4.1,
+      "real_time_congestion": 50,
+      "ai_recommend_score_distance": 70,
+      "ai_recommend_score_rating": 85,
+      "ai_recommend_score_congestion": 55,
+      "ai_recommend_score_fee": 90
+    },
+    {
+      "p_id": 6,
+      "name": "홍대입구역",
+      "address": "서울특별시 마포구 동교동 163-1",
+      "latitude": 37.552323,
+      "longitude": 126.923907,
+      "fee": 2700,
+      "avg_rating": 4.4,
+      "real_time_congestion": 65,
+      "ai_recommend_score_distance": 95,
+      "ai_recommend_score_rating": 90,
+      "ai_recommend_score_congestion": 60,
+      "ai_recommend_score_fee": 75
+    },
+    {
+      "p_id": 7,
+      "name": "왕십리역",
+      "address": "서울특별시 성동구 왕십리로 223",
+      "latitude": 37.564080,
+      "longitude": 127.039612,
+      "fee": 2600,
+      "avg_rating": 3.9,
+      "real_time_congestion": 75,
+      "ai_recommend_score_distance": 65,
+      "ai_recommend_score_rating": 70,
+      "ai_recommend_score_congestion": 85,
+      "ai_recommend_score_fee": 60
+    },
+    {
+      "p_id": 8,
+      "name": "을지로입구역",
+      "address": "서울특별시 중구 을지로 28",
+      "latitude": 37.564456,
+      "longitude": 127.008255,
+      "fee": 2300,
+      "avg_rating": 4.2,
+      "real_time_congestion": 55,
+      "ai_recommend_score_distance": 80,
+      "ai_recommend_score_rating": 70,
+      "ai_recommend_score_congestion": 50,
+      "ai_recommend_score_fee": 65
+    },
+    {
+      "p_id": 9,
+      "name": "동대문역사문화공원역",
+      "address": "서울특별시 중구 을지로 281",
+      "latitude": 37.564380,
+      "longitude": 127.010707,
+      "fee": 2000,
+      "avg_rating": 3.8,
+      "real_time_congestion": 90,
+      "ai_recommend_score_distance": 60,
+      "ai_recommend_score_rating": 65,
+      "ai_recommend_score_congestion": 90,
+      "ai_recommend_score_fee": 80
+    },
+    {
+      "p_id": 10,
+      "name": "서울숲역",
+      "address": "서울특별시 성동구 서울숲2길 26",
+      "latitude": 37.544895,
+      "longitude": 127.041459,
+      "fee": 2100,
+      "avg_rating": 4.3,
+      "real_time_congestion": 40,
+      "ai_recommend_score_distance": 75,
+      "ai_recommend_score_rating": 80,
+      "ai_recommend_score_congestion": 65,
+      "ai_recommend_score_fee": 75
+    }
+  ]
+  
+>>>>>>> 506801d3c44d1dc4a1ad5c6d0b102e8aba45234b
