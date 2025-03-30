@@ -7,24 +7,6 @@ const Login = () => {
   const [pw, setPw] = useState("");
   const [autoLogin, setAutoLogin] = useState(false);
   const navigate = useNavigate();
-<<<<<<< HEAD
-=======
-
-  useEffect(() => {
-    const cookieEmail = getCookie("email");
-    if (cookieEmail) {
-      sessionStorage.setItem("email", cookieEmail);
-      navigate("/home");
-    }
-  }, []);
-
-  const getCookie = (name) => {
-    const cookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(name + "="));
-    return cookie ? cookie.split("=")[1] : null;
-  };
->>>>>>> 506801d3c44d1dc4a1ad5c6d0b102e8aba45234b
 
   useEffect(() => {
     const cookieEmail = getCookie("email");
@@ -44,7 +26,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-<<<<<<< HEAD
     try {
       const response = await fetch("/api/users/login", {
         method: "POST",
@@ -67,19 +48,6 @@ const Login = () => {
     } catch (err) {
       console.error("Login error:", err);
       alert("로그인 요청 중 문제가 발생했습니다.");
-=======
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const matchedUser = users.find(u => u.email === email && u.password === pw);
-
-    if (matchedUser) {
-      sessionStorage.setItem("email", email);
-      if (autoLogin) {
-        document.cookie = `email=${email}; max-age=604800; path=/`; // 7일 유지
-      }
-      navigate("/home");
-    } else {
-      alert("이메일 또는 비밀번호가 틀렸습니다.");
->>>>>>> 506801d3c44d1dc4a1ad5c6d0b102e8aba45234b
     }
   };
 
