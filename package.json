@@ -15,8 +15,11 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "eruda": "^3.4.1",
+    "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
@@ -29,7 +32,13 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "gh-pages": "^6.3.0",
     "globals": "^15.15.0",
+    "msw": "^2.7.3",
     "vite": "^6.2.0"
   },
-  "homepage": "https://LYH0730.github.io/sp"
+  "homepage": "https://LYH0730.github.io/sp",
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
 }

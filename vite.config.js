@@ -1,8 +1,15 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+// 환경 변수에서 base URL을 가져옵니다.
+const base = process.env.VITE_BASE_URL;
+
 export default defineConfig({
-  base: '/sp/',
+  base: base, // 환경에 따라 다른 base 설정 사용
   plugins: [react()],
-})
+  server: {
+    headers: {
+      'Service-Worker-Allowed': '/'
+    }
+  }
+});
