@@ -27,7 +27,7 @@ const Layout = () => {
 function App() {
   useEffect(() => {
     // Eruda 초기화 (모바일에서 디버깅 도구를 사용할 수 있게 함)
-    eruda.init();  // Eruda 초기화
+    //eruda.init();  // Eruda 초기화
 
     const setViewportHeight = () => {
       const vh = window.innerHeight * 0.01;

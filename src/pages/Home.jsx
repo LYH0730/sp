@@ -90,6 +90,7 @@ const Home = () => {
       const result = await apiRequest("/api/parking-lots/recommendations/nearby", "POST", userPosition);
       setRecommendedLots(result);
       setRecommendTitle("현재 위치 기반 추천");
+      setBaseLocation(userPosition); 
       setShowRecommendedList(true);
     } catch (err) {
       console.error("현재 위치 추천 실패", err);
