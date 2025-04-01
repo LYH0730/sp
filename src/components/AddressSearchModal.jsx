@@ -16,6 +16,13 @@ const AddressSearchModal = ({ onClose, onSelect }) => {
     });
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-card slide-up">
@@ -26,6 +33,7 @@ const AddressSearchModal = ({ onClose, onSelect }) => {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="search-input"
             placeholder="주소 또는 장소명 입력"
           />

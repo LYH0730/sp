@@ -12,11 +12,28 @@ const getColorByScore = (score) => {
   return `rgb(${red}, ${green}, ${blue})`;
 };
 
-const RecommendedListPopup = ({ lots, title, onSelect, onClose }) => {
-  const sortedLots = [...lots].sort((a, b) => {
-    const factor = "ai_recommend_score_" + (a.preferred_factor?.toLowerCase() || "distance");
-    return (b[factor] || 0) - (a[factor] || 0);
-  });
+const RecommendedListPopup = ({ lots, onSelect, onClose, title, baseLocation }) => {
+  const getDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371e3;
+    const toRad = deg => deg * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const x = dLng * Math.cos(toRad((lat1 + lat2) / 2));
+    const y = dLat;
+    const distance = Math.sqrt(x * x + y * y) * R;
+    return Math.round(distance);
+  };
+
+  const sortedLots = [...lots]
+    .map(lot => {
+      const factor = "ai_recommend_score_" + (lot.preferred_factor?.toLowerCase() || "distance");
+      const score = lot[factor] || 0;
+      const distance = baseLocation
+        ? getDistance(baseLocation.lat, baseLocation.lng, lot.latitude, lot.longitude)
+        : null;
+      return { ...lot, score, distance };
+    })
+    .sort((a, b) => b.score - a.score);
 
   return (
     <div className="recommend-popup-overlay">
@@ -25,16 +42,14 @@ const RecommendedListPopup = ({ lots, title, onSelect, onClose }) => {
         <button className="recommend-close-btn" onClick={onClose}>×</button>
         <ul className="recommend-list">
           {sortedLots.map((lot) => {
-            const factor = lot.preferred_factor?.toLowerCase() || "distance";
-            const score = lot[`ai_recommend_score_${factor}`] || 0;
-            const scoreColor = getColorByScore(score);
-
+            const scoreColor = getColorByScore(lot.score);
             return (
               <li key={lot.p_id} className="recommend-card" onClick={() => onSelect(lot)}>
                 <h4>{lot.name}</h4>
                 <p>{lot.address}</p>
                 <p>요금: {lot.fee.toLocaleString()}원</p>
-                <p>AI 추천 점수: <span style={{ color: scoreColor }}>{score}</span></p>
+                <p>AI 추천 점수: <span style={{ color: scoreColor }}>{lot.score}</span></p>
+                {lot.distance != null && <p>거리: {lot.distance.toLocaleString()}m</p>}
               </li>
             );
           })}

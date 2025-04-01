@@ -18,7 +18,10 @@ const Home = () => {
   const [recommendedLots, setRecommendedLots] = useState([]);
   const [recommendTitle, setRecommendTitle] = useState("");
   const [showRecommendedList, setShowRecommendedList] = useState(false);
+  const [baseLocation, setBaseLocation] = useState(null);
 
+
+  // 사용자 위치 받아오기
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => setUserPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
@@ -26,10 +29,12 @@ const Home = () => {
     );
   }, []);
 
+  // Kakao Map 로딩
   useEffect(() => {
     if (!userPosition || isKakaoMapLoaded) return;
 
     const scriptId = "kakao-map-sdk";
+
     const loadMap = () => {
       const options = {
         center: new window.kakao.maps.LatLng(userPosition.lat, userPosition.lng),
@@ -38,6 +43,16 @@ const Home = () => {
       const map = new window.kakao.maps.Map(mapRef.current, options);
       setMapInstance(map);
       setIsKakaoMapLoaded(true);
+
+      // sessionStorage에 저장된 북마크 대상이 있다면 지도 이동 + 팝업 표시
+      const stored = sessionStorage.getItem("targetParking");
+      if (stored) {
+        const parking = JSON.parse(stored);
+        const moveLatLng = new window.kakao.maps.LatLng(parking.latitude, parking.longitude);
+        map.setCenter(moveLatLng);
+        setSelectedParking(parking);
+        sessionStorage.removeItem("targetParking");
+      }
     };
 
     if (!document.getElementById(scriptId)) {
@@ -52,17 +67,23 @@ const Home = () => {
     }
   }, [userPosition, isKakaoMapLoaded]);
 
+  // 목적지 주소 선택 시
   const handleSelectAddress = async ({ lat, lng, place }) => {
     try {
-      const result = await apiRequest("/api/parking-lots/recommendations/destination", "POST", { lat, lng });
+      const result = await apiRequest("/api/parking-lots/recommendations/destination", "POST", {
+        lat,
+        lng,
+      });
       setRecommendedLots(result);
       setRecommendTitle(`"${place.place_name}" 근처 추천`);
       setShowRecommendedList(true);
+      setBaseLocation({ lat, lng });
     } catch (err) {
       console.error("목적지 추천 실패", err);
     }
   };
 
+  // 현재 위치 기반 추천
   const handleNearbyRecommend = async () => {
     if (!userPosition) return;
     try {
@@ -82,9 +103,11 @@ const Home = () => {
       {mapInstance && userPosition && (
         <LocationMarker map={mapInstance} position={userPosition} />
       )}
+
       {mapInstance && (
         <ParkingLocationMarker map={mapInstance} setSelectedParking={setSelectedParking} />
       )}
+
       {selectedParking && (
         <ParkingPopup parking={selectedParking} onClose={() => setSelectedParking(null)} />
       )}
@@ -100,6 +123,7 @@ const Home = () => {
         <RecommendedListPopup
           title={recommendTitle}
           lots={recommendedLots}
+          baseLocation={baseLocation} // 현재 위치 or 검색 위치
           onSelect={(lot) => {
             const moveLatLng = new window.kakao.maps.LatLng(lot.latitude, lot.longitude);
             mapInstance.setCenter(moveLatLng);
