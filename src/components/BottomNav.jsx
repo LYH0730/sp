@@ -2,58 +2,48 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
   faUser,
-  faBarcode,
+  faBookmark,
   faMagnifyingGlass,
-  faMapLocationDot
+  faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 import "./BottomNav.css";
 
-const BottomNav = () => {
+const BottomNav = ({ onOpenAddressModal, onOpenNearbyRecommend }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const userId = sessionStorage.getItem("email");
+  const { user } = useContext(UserContext);
 
   const handleConnectUser = () => {
-    if (!userId) navigate("/login");
-    else navigate("/mypage"); // 수정: /user → /mypage로 이동
+    if (!user) navigate("/login");
+    else navigate("/mypage");
   };
 
-  const showNav = ["/", "/home", "/search", "/mypage", "/map", "/barcode"].includes(location.pathname);
+  const showNav = ["/", "/home", "/mypage", "/map", "/bookmarks"].includes(location.pathname);
   if (!showNav) return null;
 
   return (
     <nav className="nav-wrapper">
-      <Link to="/map" className="nav-link">
-        <FontAwesomeIcon
-          icon={faMapLocationDot}
-          className={location.pathname === "/map" ? "nav-item active-nav-item" : "nav-item"}
-        />
-      </Link>
-      <Link to="/barcode" className="nav-link">
-        <FontAwesomeIcon
-          icon={faBarcode}
-          className={location.pathname === "/barcode" ? "nav-item active-nav-item" : "nav-item"}
-        />
+      {/* 첫 번째 아이콘: 현재 위치 기반 추천 */}
+      <div onClick={onOpenNearbyRecommend} className="nav-link">
+        <FontAwesomeIcon icon={faMapLocationDot} className="nav-item" />
+      </div>
+
+      <Link to="/bookmarks" className="nav-link">
+        <FontAwesomeIcon icon={faBookmark} className={location.pathname === "/bookmarks" ? "nav-item active-nav-item" : "nav-item"} />
       </Link>
       <Link to="/home" className="nav-link">
-        <FontAwesomeIcon
-          icon={faHome}
-          className={location.pathname === "/home" ? "nav-item active-nav-item" : "nav-item inactive-nav-item"}
-        />
+        <FontAwesomeIcon icon={faHome} className={location.pathname === "/home" ? "nav-item active-nav-item" : "nav-item"} />
       </Link>
-      <Link to="/search" className="nav-link">
-        <FontAwesomeIcon
-          icon={faMagnifyingGlass}
-          className={location.pathname === "/search" ? "nav-item active-nav-item" : "nav-item"}
-        />
-      </Link>
+
+      <div onClick={onOpenAddressModal} className="nav-link">
+        <FontAwesomeIcon icon={faMagnifyingGlass} className="nav-item" />
+      </div>
+
       <div onClick={handleConnectUser} className="nav-link">
-        <FontAwesomeIcon
-          icon={faUser}
-          className={location.pathname === "/mypage" ? "nav-item active-nav-item" : "nav-item"}
-        />
+        <FontAwesomeIcon icon={faUser} className={location.pathname === "/mypage" ? "nav-item active-nav-item" : "nav-item"} />
       </div>
     </nav>
   );

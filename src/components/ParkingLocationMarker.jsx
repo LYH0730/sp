@@ -1,23 +1,22 @@
-import { useEffect, useState } from "react";
+// src/components/ParkingLocationMarker.jsx
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../context/UserContext";
 import ParkingPopup from "./ParkingPopup";
+import { apiRequest } from "../api/api";
 
 const ParkingLocationMarker = ({ map }) => {
-  const [preferredFactor, setPreferredFactor] = useState(null);
+  const { user } = useContext(UserContext);
   const [parkingData, setParkingData] = useState([]);
   const [selectedParking, setSelectedParking] = useState(null);
 
-  // 점수에 따라 색상 변화 (0 -> 빨강, 100 -> 초록, 50 -> 노랑)
   const getColorByScore = (score) => {
-    // 0 -> 빨강, 100 -> 초록, 50 -> 노랑 (중간값)
     let red, green, blue = 0;
 
     if (score <= 50) {
-      // 빨강 -> 노랑
       red = 255;
-      green = Math.round(score * 5.1);  // 빨강에서 노랑으로
+      green = Math.round(score * 5.1);
     } else {
-      // 노랑 -> 초록
-      red = Math.round((100 - score) * 5.1);  // 노랑에서 초록으로
+      red = Math.round((100 - score) * 5.1);
       green = 255;
     }
 
@@ -25,42 +24,23 @@ const ParkingLocationMarker = ({ map }) => {
   };
 
   useEffect(() => {
-    const fetchUserPreference = async () => {
-      const email = sessionStorage.getItem("email");
-      if (!email) return;
-
-      try {
-        const res = await fetch(`/api/users/${email}`);
-        const user = await res.json();
-        setPreferredFactor(user.preferred_factor);
-      } catch {
-        setPreferredFactor("DISTANCE");
-      }
-    };
-    fetchUserPreference();
-  }, []);
-
-  useEffect(() => {
     const fetchParking = async () => {
       try {
-        const res = await fetch("/api/parkings");
-        const data = await res.json();
+        const data = await apiRequest("/api/parking-lots");
         setParkingData(data);
       } catch (e) {
-        console.error("주차장 데이터 오류", e);
+        console.error("주차장 데이터 오류:", e.message);
       }
     };
     fetchParking();
   }, []);
 
   useEffect(() => {
-    if (!map || !window.kakao || !preferredFactor || parkingData.length === 0) return;
+    if (!map || !window.kakao || !user?.preferred_factor || parkingData.length === 0) return;
 
     parkingData.forEach((parking) => {
-      const key = `ai_recommend_score_${preferredFactor.toLowerCase()}`;
+      const key = `ai_recommend_score_${user.preferred_factor.toLowerCase()}`;
       const score = parking[key] || 0;
-
-      // 점수에 따라 색상 변화
       const color = getColorByScore(score);
 
       const markerImage = new window.kakao.maps.MarkerImage(
@@ -85,14 +65,14 @@ const ParkingLocationMarker = ({ map }) => {
         setSelectedParking(parking);
       });
     });
-  }, [map, preferredFactor, parkingData]);
+  }, [map, user?.preferred_factor, parkingData]);
 
   return (
     <>
       {selectedParking && (
         <ParkingPopup
           parking={selectedParking}
-          preferredFactor={preferredFactor}
+          preferredFactor={user?.preferred_factor}
           onClose={() => setSelectedParking(null)}
         />
       )}

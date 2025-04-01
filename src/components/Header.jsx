@@ -1,6 +1,7 @@
 import { faAngleLeft, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./Header.css";
 
 const Header = () => {
@@ -24,7 +25,7 @@ const Header = () => {
   const handleLogout = () => {
     document.cookie = "email=; max-age=0; path=/";
     sessionStorage.removeItem("email");
-    alert("로그아웃 되었습니다.");
+    toast.info("로그아웃 되었습니다.");
     navigate("/login");
   };
 

@@ -1,99 +1,83 @@
-import { useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../api/api";
+import { toast } from "react-toastify";
 import "./MyPage.css";
 
 const MyPage = () => {
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+
   const [nickname, setNickname] = useState("");
   const [preferred, setPreferred] = useState("");
-  const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordChangeVisible, setIsPasswordChangeVisible] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const userEmail = sessionStorage.getItem("email");
-      if (!userEmail) return;
-
       try {
-        const response = await fetch(`/api/users/${userEmail}`);
-        const data = await response.json();
-
-        setEmail(data.email);
-        setNickname(data.nickname);
-        setPreferred(data.preferred_factor);
-      } catch (error) {
-        console.error("사용자 정보 조회 실패", error);
+        const res = await apiRequest("/api/users/mypage");
+        setNickname(res.nickname);
+        setPreferred(res.preferred_factor);
+        setUser(res);
+      } catch (err) {
+        toast.error("로그인이 필요합니다.");
+        navigate("/login");
       }
     };
-
     fetchUserInfo();
   }, []);
 
-  const handleProfileUpdate = async (e) => {
-    e.preventDefault();
-
+  const handleProfileUpdate = async () => {
     try {
-      const response = await fetch(`/api/users/${email}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nickname,
-          preferred_factor: preferred,
-        }),
+      await apiRequest("/api/users/mypage", "PATCH", {
+        nickname,
+        preferred_factor: preferred,
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        alert("정보가 수정되었습니다.");
-      } else {
-        alert(result.message || "수정 실패");
-      }
+      toast.success("정보가 수정되었습니다.");
+      setUser((prev) => ({
+        ...prev,
+        nickname,
+        preferred_factor: preferred,
+      }));
     } catch (error) {
-      console.error("프로필 수정 오류", error);
-      alert("서버 오류 발생");
+      toast.error(error.message || "수정 실패");
     }
   };
 
-  const handlePasswordChange = async (e) => {
-    e.preventDefault();
-
+  const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
-      alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+      toast.error("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
       return;
     }
 
     try {
-      const response = await fetch(`/api/users/${email}/password`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
+      await apiRequest("/api/users/password", "PATCH", {
+        current_password: currentPassword,
+        new_password: newPassword,
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        alert("비밀번호가 수정되었습니다.");
-      } else {
-        alert(result.message || "비밀번호 수정 실패");
-      }
+      toast.success("비밀번호가 수정되었습니다.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setIsPasswordChangeVisible(false);
     } catch (error) {
-      console.error("비밀번호 변경 오류", error);
-      alert("서버 오류 발생");
+      toast.error(error.message || "비밀번호 수정 실패");
     }
   };
 
   return (
     <div className="mypage-container">
       <h1>마이페이지</h1>
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <div>
           <label>이메일</label>
-          <input type="text" value={email} disabled />
+          <input type="text" value={user?.email || ""} disabled />
         </div>
         <div>
           <label>닉네임</label>
@@ -105,26 +89,20 @@ const MyPage = () => {
         </div>
         <div>
           <label>선호 요소</label>
-          <select
-            value={preferred}
-            onChange={(e) => setPreferred(e.target.value)}
-          >
+          <select value={preferred} onChange={(e) => setPreferred(e.target.value)}>
             <option value="FEE">요금</option>
             <option value="DISTANCE">거리</option>
             <option value="RATING">평점</option>
             <option value="CONGESTION">혼잡도</option>
           </select>
         </div>
-
-        <button type="button" onClick={handleProfileUpdate}>
-          적용
-        </button>
+        <button type="button" onClick={handleProfileUpdate}>정보 수정</button>
 
         <button
           type="button"
           onClick={() => setIsPasswordChangeVisible(!isPasswordChangeVisible)}
         >
-          {isPasswordChangeVisible ? "취소" : "비밀번호 변경하기"}
+          {isPasswordChangeVisible ? "비밀번호 변경 취소" : "비밀번호 변경하기"}
         </button>
 
         {isPasswordChangeVisible && (
@@ -153,9 +131,7 @@ const MyPage = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
-            <button type="submit" onClick={handlePasswordChange}>
-              비밀번호 수정하기
-            </button>
+            <button type="button" onClick={handlePasswordChange}>비밀번호 수정하기</button>
           </>
         )}
       </form>

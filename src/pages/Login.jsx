@@ -1,90 +1,84 @@
-import { useEffect, useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+import { apiRequest } from "../api/api";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
-  const [autoLogin, setAutoLogin] = useState(false);
+export default function Login() {
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [autoLogin, setAutoLogin] = useState(false);
+
   useEffect(() => {
-    const cookieEmail = getCookie("email");
+    const cookieEmail = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("email="))?.split("=")[1];
     if (cookieEmail) {
-      sessionStorage.setItem("email", cookieEmail);
-      navigate("/home");
+      setEmail(cookieEmail);
+      setAutoLogin(true);
     }
   }, []);
 
-  const getCookie = (name) => {
-    const cookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(name + "="));
-    return cookie ? cookie.split("=")[1] : null;
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
+  const handleLogin = async () => {
     try {
-      const response = await fetch("/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: pw })
+      const data = await apiRequest("/api/users/login", "POST", {
+        email,
+        password,
       });
 
-      const data = await response.json();
+      setUser({
+        email,
+        nickname: data.nickname,
+        preferred_factor: data.preferred_factor,
+      });
 
-      if (response.ok) {
-        sessionStorage.setItem("email", email);
-        if (autoLogin) {
-          document.cookie = `email=${email}; max-age=604800; path=/`;
-        }
-        alert("로그인 성공!");
-        navigate("/home");
+      if (autoLogin) {
+        document.cookie = `email=${email}; max-age=604800; path=/`;
       } else {
-        alert(data.message || "로그인 실패");
+        document.cookie = `email=; max-age=0; path=/`;
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("로그인 요청 중 문제가 발생했습니다.");
+
+      toast.success("로그인 성공!");
+      navigate("/home");
+    } catch (error) {
+      console.error("Login error:", error.message);
+      toast.error(error.message || "로그인 실패");
     }
   };
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleLogin}>
-        <label htmlFor="email">이메일</label>
+      <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+        <h2>로그인</h2>
         <input
-          id="email"
-          type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="이메일"
         />
-        <label htmlFor="pw">비밀번호</label>
         <input
-          id="pw"
           type="password"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호"
         />
-
-        <label style={{ marginBottom: "10px" }}>
+        <label>
           <input
             type="checkbox"
             checked={autoLogin}
-            onChange={() => setAutoLogin(!autoLogin)}
+            onChange={(e) => setAutoLogin(e.target.checked)}
           />
           자동 로그인
         </label>
-
-        <button type="submit">로그인</button>
+        <button onClick={handleLogin}>로그인</button>
         <div className="signup-link">
           <Link to="/signup">회원가입</Link>
         </div>
       </form>
     </div>
   );
-};
-
-export default Login;
+}

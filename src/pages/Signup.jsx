@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../api/api";
+import { toast } from "react-toastify";
 import "./Signup.css";
 
 const Signup = () => {
@@ -14,32 +16,23 @@ const Signup = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+      toast.error("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    // MSW API 호출로 회원가입 요청
     try {
-      const response = await fetch('/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          nickname: nickname,
-          preferred_factor: preferred
-        })
+      await apiRequest("/api/users/register", "POST", {
+        email,
+        password,
+        nickname,
+        preferred_factor: preferred
       });
-      const data = await response.json();
-      if (response.ok) {
-        alert("회원가입 성공! 이제 로그인 해보세요.");
-        navigate("/login");
-      } else {
-        alert(data.message);
-      }
+
+      toast.success("회원가입 성공! 이제 로그인 해보세요.");
+      navigate("/login");
     } catch (error) {
-      console.error("Signup error:", error);
-      alert("회원가입 처리 중 오류가 발생했습니다.");
+      console.error("Signup error:", error.message);
+      toast.error(error.message || "회원가입 처리 중 오류가 발생했습니다.");
     }
   };
 
@@ -76,46 +69,20 @@ const Signup = () => {
         />
         <label>선호 요소</label>
         <div className="radio-group">
-          <label>
-            <input
-              type="radio"
-              name="preferred"
-              value="FEE"
-              checked={preferred === "FEE"}
-              onChange={(e) => setPreferred(e.target.value)}
-            />
-            요금
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="preferred"
-              value="DISTANCE"
-              checked={preferred === "DISTANCE"}
-              onChange={(e) => setPreferred(e.target.value)}
-            />
-            거리
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="preferred"
-              value="RATING"
-              checked={preferred === "RATING"}
-              onChange={(e) => setPreferred(e.target.value)}
-            />
-            평점
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="preferred"
-              value="CONGESTION"
-              checked={preferred === "CONGESTION"}
-              onChange={(e) => setPreferred(e.target.value)}
-            />
-            혼잡도
-          </label>
+          {["FEE", "DISTANCE", "RATING", "CONGESTION"].map((factor) => (
+            <label key={factor}>
+              <input
+                type="radio"
+                name="preferred"
+                value={factor}
+                checked={preferred === factor}
+                onChange={(e) => setPreferred(e.target.value)}
+              />
+              {factor === "FEE" ? "요금" :
+               factor === "DISTANCE" ? "거리" :
+               factor === "RATING" ? "평점" : "혼잡도"}
+            </label>
+          ))}
         </div>
         <button type="submit">회원가입</button>
       </form>
